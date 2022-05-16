@@ -1,4 +1,5 @@
 using Client.Services;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Components;
@@ -33,6 +34,9 @@ builder.Services.AddAuthentication(options =>
         options.ResponseType = "code";
         options.SaveTokens = true;
         options.GetClaimsFromUserInfoEndpoint = true;
+        options.ClaimActions.MapJsonKey("role", "role", "role");
+        options.TokenValidationParameters.NameClaimType = "name";
+        options.TokenValidationParameters.RoleClaimType = "role";
     }
 );
 

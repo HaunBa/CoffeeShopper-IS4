@@ -23,7 +23,7 @@ namespace Client.Pages
 			var tokenResponse = await TokenService.GetToken("CoffeeAPI.read");
 			HttpClient.SetBearerToken(tokenResponse.AccessToken);
 
-			var result = await HttpClient.GetAsync(Config["apiUrl"] + "/api/CoffeeShop");
+			var result = await HttpClient.GetAsync(Config["apiUrl"] + "/api/CoffeeShop/List");
 
 			if (result.IsSuccessStatusCode)
 			{

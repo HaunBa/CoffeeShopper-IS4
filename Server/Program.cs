@@ -1,7 +1,9 @@
+using IdentityServer4.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Server;
 using Server.Data;
+using Server.Services;
 
 var seed = args.Contains("/seed");
 if (seed)
@@ -18,6 +20,11 @@ if (seed)
 {
     SeedData.EnsureSeedData(defaultConnString);
 }
+
+// TODO: Rolemanagement
+
+builder.Services.AddScoped<WindowsSignIn>();
+builder.Services.AddScoped<IProfileService, ProfileService>();
 
 builder.Services.AddDbContext<AspNetIdentityDbContext>(options =>
     options.UseSqlServer(defaultConnString,

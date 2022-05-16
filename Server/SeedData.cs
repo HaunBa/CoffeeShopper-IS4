@@ -62,6 +62,28 @@ namespace Server
 
         private static void EnsureUsers(IServiceScope scope)
         {
+            var roleMgr = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+
+            var member = roleMgr.FindByNameAsync("member").Result;
+            if (member == null)
+            {
+                member = new IdentityRole
+                {
+                    Name = "member"
+                };
+                _ = roleMgr.CreateAsync(member).Result;
+            }
+
+            var admin = roleMgr.FindByNameAsync("admin").Result;
+            if (member == null)
+            {
+                admin = new IdentityRole
+                {
+                    Name = "admin"
+                };
+                _ = roleMgr.CreateAsync(admin).Result;
+            }
+
             var userMgr = scope.ServiceProvider.GetRequiredService<UserManager<IdentityUser>>();
 
             var angella = userMgr.FindByNameAsync("angella").Result;
@@ -79,6 +101,11 @@ namespace Server
                     throw new Exception(result.Errors.First().Description);
                 }
 
+                if (!userMgr.IsInRoleAsync(angella, member.Name).Result)
+                {
+                    _ = userMgr.AddToRoleAsync(angella, member.Name);
+                }
+
                 result =
                     userMgr.AddClaimsAsync(
                         angella,
@@ -94,6 +121,45 @@ namespace Server
                 if (!result.Succeeded)
                 {
                     throw new Exception(result.Errors.First().Description);
+                }
+
+
+                var bob = userMgr.FindByNameAsync("bob").Result;
+                if (bob == null)
+                {
+                    bob = new IdentityUser
+                    {
+                        UserName = "bob",
+                        Email = "bob.wiesi@email.com",
+                        EmailConfirmed = true
+                    };
+                    var res = userMgr.CreateAsync(angella, "Pass123$").Result;
+                    if (!res.Succeeded)
+                    {
+                        throw new Exception(res.Errors.First().Description);
+                    }
+
+                    if (!userMgr.IsInRoleAsync(bob, admin.Name).Result)
+                    {
+                        _ = userMgr.AddToRoleAsync(bob, admin.Name);
+                    }
+
+                    result =
+                        userMgr.AddClaimsAsync(
+                            angella,
+                            new Claim[]
+                            {
+                            new Claim(JwtClaimTypes.Name, "bob wiesi"),
+                            new Claim(JwtClaimTypes.GivenName, "bob"),
+                            new Claim(JwtClaimTypes.FamilyName, "wiesi"),
+                            new Claim(JwtClaimTypes.WebSite, "http://bob.com"),
+                            new Claim("location", "somewhere")
+                            }
+                        ).Result;
+                    if (!res.Succeeded)
+                    {
+                        throw new Exception(result.Errors.First().Description);
+                    }
                 }
             }
         }

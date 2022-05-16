@@ -15,6 +15,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Server.Services;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
@@ -35,13 +36,15 @@ namespace IdentityServerHost.Quickstart.UI
         private readonly IAuthenticationSchemeProvider _schemeProvider;
         private readonly IEventService _events;
 		private readonly SignInManager<IdentityUser> _signInManager;
+        private readonly WindowsSignIn _signIn;
 
-		public AccountController(
+        public AccountController(
             IIdentityServerInteractionService interaction,
             IClientStore clientStore,
             IAuthenticationSchemeProvider schemeProvider,
             IEventService events,
-            SignInManager<IdentityUser> signInManager)
+            SignInManager<IdentityUser> signInManager,
+            WindowsSignIn signIn)
         {
 
             _interaction = interaction;
@@ -49,7 +52,8 @@ namespace IdentityServerHost.Quickstart.UI
             _schemeProvider = schemeProvider;
             _events = events;
 			_signInManager = signInManager;
-		}
+            _signIn = signIn;
+        }
 
         /// <summary>
         /// Entry point into the login workflow
@@ -78,7 +82,6 @@ namespace IdentityServerHost.Quickstart.UI
         {
             // check if we are in the context of an authorization request
             var context = await _interaction.GetAuthorizationContextAsync(model.ReturnUrl);
-
             // the user clicked the "cancel" button
             if (button != "login")
             {
@@ -108,6 +111,7 @@ namespace IdentityServerHost.Quickstart.UI
 
             if (ModelState.IsValid)
             {
+                var test = await _signIn.PasswordSignInAsync(model.Username, model.Password, true, false);
                 var user = await _signInManager.UserManager.FindByNameAsync(model.Username);
 
 				if (user is not null)

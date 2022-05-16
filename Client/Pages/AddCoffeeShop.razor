@@ -1,0 +1,35 @@
+﻿@page "/addcoffeeshop"
+@attribute [Authorize]
+
+    <!-- bootstrap css -->
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <!-- style css -->
+    <link rel="stylesheet" href="css/style.css">
+    <!-- Responsive-->
+    <link rel="stylesheet" href="css/responsive.css">
+
+<h3>Add a CoffeeShop</h3>
+
+<div class="row">
+    <div class="col-md-10 offset-md-1">
+        <form id="request" class="main_form" method="post">
+            <div class="row">
+            <div class="col-md-12 ">
+                <label asp-for="@Shop.Name" style="margin-left:25%">Name:</label><br />
+                <input class="contactus" asp-for="@Shop.Name" placeholder="Name" type="text" name="Name"> 
+            </div>
+            <div class="col-md-12">
+                <label asp-for="@Shop.OpeningHours" style="margin-left:25%">Openinghours:</label><br />
+                <input class="contactus" asp-for="@Shop.OpeningHours" placeholder="OpeningHours" type="text" name="OpeningHours"> 
+            </div>
+            <div class="col-md-12">
+                <label asp-for="@Shop.Address" style="margin-left:25%">Adress:</label><br />
+                <textarea class="textarea" asp-for="@Shop.Address" placeholder="Address" type="text" Message="Address"> </textarea>
+            </div>
+            <div class="col-md-12">
+                <button type="submit" asp-controller="CoffeeShop" asp-action="AddCoffeeShop" class="send_btn" >Send</button>
+            </div>
+            </div>
+        </form>
+    </div>
+</div>
